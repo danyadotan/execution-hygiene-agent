@@ -1,27 +1,31 @@
-# execution-hygiene-agent
-Execution Hygiene Agent - a reusable reduction layer between verified agent output and human attention.
-# Execution Hygiene Agent
+Execution Hygiene Agent
 
-AI agents can produce more work than humans can reasonably review.
+Why
+↓
+Verified agent output can still overwhelm human attention.
 
-Execution Hygiene Agent is a reference implementation for reducing
-already-verified agent output into only the decisions, exceptions,
-and authority boundaries that genuinely require human attention.
+What
+↓
+A reduction layer between verified agent work and human judgment.
 
-*It does not replace human authority*.
+How
+↓
+verified output
+→ policy
+→ materiality / risk / authority
+→ auto-pass | surface | require approval | escalate
 
-It reduces review load without reducing human control.
+Demo
+↓
+10 documents → 8 no re-reading → 2 surfaced → 1 approval
 
-10 verified documents
-        ↓
-semantic diff
-        ↓
-materiality / risk / policy
-        ↓
-8 auto-pass
-2 surfaced
-1 human approval
-        ↓
-10 closed
+Safety invariants
+↓
+Required approval can never be suppressed.
+Unknown changes fail safe by escalating.
 
-Why this exists → How it works → Run the example → Safety invariant → Architecture → License
+Run it
+↓
+npm install
+npm run demo
+npm test
