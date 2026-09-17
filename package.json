@@ -1,0 +1,15 @@
+{
+  "name": "execution-hygiene-agent",
+  "version": "0.1.0",
+  "description": "A reusable reduction layer between verified agent output and human attention.",
+  "type": "module",
+  "scripts": {
+    "demo": "tsx src/index.ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
