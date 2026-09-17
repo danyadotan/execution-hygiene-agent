@@ -1,21 +1,19 @@
-import { describe, expect, it } from "vitest";
+import test from "node:test";
+import assert from "node:assert/strict";
 
-describe("Execution Hygiene Agent safety invariants", () => {
-  it("never suppresses a required human approval", () => {
-    const requireHumanApproval = ["commercial_commitment"];
+test("required human approval can never be suppressed", () => {
+  const requireHumanApproval = ["commercial_commitment"];
+  const changeType = "commercial_commitment";
 
-    const changeType = "commercial_commitment";
+  assert.equal(requireHumanApproval.includes(changeType), true);
+});
 
-    expect(requireHumanApproval.includes(changeType)).toBe(true);
-  });
+test("approved low-risk changes can avoid human re-reading", () => {
+  const autoPass = [
+    "formatting_only",
+    "approved_personalization",
+    "non_material_style_change",
+  ];
 
-  it("allows approved low-risk changes to avoid human re-reading", () => {
-    const autoPass = [
-      "formatting_only",
-      "approved_personalization",
-      "non_material_style_change",
-    ];
-
-    expect(autoPass.includes("formatting_only")).toBe(true);
-  });
+  assert.equal(autoPass.includes("formatting_only"), true);
 });
