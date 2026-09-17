@@ -5,7 +5,7 @@ import {
   classify,
   type Artifact,
   type Policy,
-} from "./hygiene.js";
+} from "./hygiene.ts";
 
 type Input = {
   scenario: string;
@@ -16,12 +16,20 @@ type Input = {
 const root = process.cwd();
 
 const policy: Policy = JSON.parse(
-  fs.readFileSync(path.join(root, "config", "policy.json"), "utf8")
+  fs.readFileSync(
+    path.join(root, "config", "policy.json"),
+    "utf8"
+  )
 );
 
 const input: Input = JSON.parse(
   fs.readFileSync(
-    path.join(root, "examples", "ten-documents", "input.json"),
+    path.join(
+      root,
+      "examples",
+      "ten-documents",
+      "input.json"
+    ),
     "utf8"
   )
 );
@@ -38,22 +46,29 @@ const results = input.artifacts.map((artifact) =>
 
 const summary = {
   artifactsReceived: results.length,
-  autoPassed: results.filter((r) => r.decision === "auto_pass").length,
-  surfaced: results.filter((r) => r.decision === "surface").length,
-  requireApproval: results.filter(
-    (r) => r.decision === "require_approval"
+  autoPassed: results.filter(
+    (result) => result.decision === "auto_pass"
   ).length,
-  escalated: results.filter((r) => r.decision === "escalate").length,
+  surfaced: results.filter(
+    (result) => result.decision === "surface"
+  ).length,
+  requireApproval: results.filter(
+    (result) => result.decision === "require_approval"
+  ).length,
+  escalated: results.filter(
+    (result) => result.decision === "escalate"
+  ).length,
 };
 
 const humanReviewSet = results.filter(
-  (r) =>
-    r.decision === "surface" ||
-    r.decision === "require_approval" ||
-    r.decision === "escalate"
+  (result) =>
+    result.decision === "surface" ||
+    result.decision === "require_approval" ||
+    result.decision === "escalate"
 );
 
 console.log("\nExecution Hygiene Agent\n");
+
 console.log(input.scenario);
 
 console.log("\nSummary:");
