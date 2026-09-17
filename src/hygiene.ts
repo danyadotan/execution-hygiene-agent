@@ -1,73 +1,92 @@
-export type Policy = {
-  autoPass: string[];
-  surface: string[];
-  requireHumanApproval: string[];
-  escalate: string[];
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import {
+  classify,
+  type Policy,
+} from "../src/hygiene.ts";
+
+const policy: Policy = {
+  autoPass: [
+    "formatting_only",
+    "approved_personalization",
+    "non_material_style_change",
+  ],
+
+  surface: [
+    "material_style_change",
+    "unusual_change",
+    "policy_exception",
+  ],
+
+  requireHumanApproval: [
+    "commercial_commitment",
+    "legal_change",
+    "permission_change",
+    "financial_commitment",
+  ],
+
+  escalate: [
+    "missing_evidence",
+    "conflicting_policy",
+    "unresolved_risk",
+  ],
 };
 
-export type Artifact = {
-  id: string;
-  changeType: string;
-  change: string;
-};
+test(
+  "required human approval can never be suppressed",
+  () => {
+    const result = classify(
+      {
+        id: "client-09",
+        changeType: "commercial_commitment",
+        change: "Added a 4-hour response-time commitment.",
+      },
+      policy
+    );
 
-export type Decision =
-  | "auto_pass"
-  | "surface"
-  | "require_approval"
-  | "escalate";
-
-export type Result = {
-  id: string;
-  decision: Decision;
-  reason: string;
-  changeType: string;
-};
-
-export function classify(
-  artifact: Artifact,
-  policy: Policy
-): Result {
-  if (policy.requireHumanApproval.includes(artifact.changeType)) {
-    return {
-      id: artifact.id,
-      decision: "require_approval",
-      reason: "Policy requires explicit human authority for this change type.",
-      changeType: artifact.changeType,
-    };
+    assert.equal(
+      result.decision,
+      "require_approval"
+    );
   }
+);
 
-  if (policy.escalate.includes(artifact.changeType)) {
-    return {
-      id: artifact.id,
-      decision: "escalate",
-      reason: "The item cannot be safely resolved from the available evidence.",
-      changeType: artifact.changeType,
-    };
+test(
+  "approved low-risk changes can avoid human re-reading",
+  () => {
+    const result = classify(
+      {
+        id: "client-02",
+        changeType: "formatting_only",
+        change: "Heading spacing adjusted.",
+      },
+      policy
+    );
+
+    assert.equal(
+      result.decision,
+      "auto_pass"
+    );
   }
+);
 
-  if (policy.surface.includes(artifact.changeType)) {
-    return {
-      id: artifact.id,
-      decision: "surface",
-      reason: "The change is material enough to deserve human attention.",
-      changeType: artifact.changeType,
-    };
+test(
+  "unknown change types fail safe by escalating",
+  () => {
+    const result = classify(
+      {
+        id: "client-11",
+        changeType: "unknown_change",
+        change: "An unrecognized change appeared.",
+      },
+      policy
+    );
+
+    assert.equal(
+      result.decision,
+      "escalate"
+    );
   }
+);
 
-  if (policy.autoPass.includes(artifact.changeType)) {
-    return {
-      id: artifact.id,
-      decision: "auto_pass",
-      reason: "The change is covered by approved policy and needs no human review.",
-      changeType: artifact.changeType,
-    };
-  }
-
-  return {
-    id: artifact.id,
-    decision: "escalate",
-    reason: "No matching policy rule exists for this change type.",
-    changeType: artifact.changeType,
-  };
-}
