@@ -45,7 +45,10 @@ test(
       policy
     );
 
-    assert.equal(result.decision, "require_approval");
+    assert.equal(
+      result.decision,
+      "require_approval"
+    );
   }
 );
 
@@ -61,7 +64,10 @@ test(
       policy
     );
 
-    assert.equal(result.decision, "auto_pass");
+    assert.equal(
+      result.decision,
+      "auto_pass"
+    );
   }
 );
 
@@ -77,6 +83,9 @@ test(
       policy
     );
 
-    assert.equal(result.decision, "escalate");
+    assert.equal(
+      result.decision,
+      "escalate"
+    );
   }
 );
