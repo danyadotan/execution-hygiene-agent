@@ -225,6 +225,14 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
+## Citation
+
+GitHub can generate citation formats directly from [CITATION.cff](CITATION.cff).
+
+If you use the implementation or the execution-hygiene framing in research, evaluation work, or another open-source project, please cite this repository.
+
+---
+
 ## License
 
 MIT © 2026 Danya Dotan. See [LICENSE](LICENSE).
