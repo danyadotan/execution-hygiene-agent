@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,8 +23,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run demo
-        run: npm run demo
-
-      - name: Run safety tests
-        run: npm test
+      - name: Run demo and tests
+        run: npm run check

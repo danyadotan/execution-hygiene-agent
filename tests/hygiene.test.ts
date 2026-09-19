@@ -1,8 +1,11 @@
+import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
   classify,
+  type Artifact,
   type Policy,
 } from "../src/hygiene.ts";
 
@@ -87,5 +90,77 @@ test(
       result.decision,
       "escalate"
     );
+  }
+);
+
+test(
+  "the ten-document scenario preserves the 10 → 8 → 2 → 1 contract",
+  () => {
+    const root = process.cwd();
+
+    const examplePolicy: Policy = JSON.parse(
+      fs.readFileSync(path.join(root, "config", "policy.json"), "utf8")
+    );
+
+    const input: {
+      verifiedBeforeHygiene: boolean;
+      artifacts: Artifact[];
+    } = JSON.parse(
+      fs.readFileSync(
+        path.join(root, "examples", "ten-documents", "input.json"),
+        "utf8"
+      )
+    );
+
+    const expected: {
+      summary: {
+        artifactsReceived: number;
+        autoPassed: number;
+        surfaced: number;
+        requireApproval: number;
+        escalated: number;
+      };
+      humanReviewSet: Array<{
+        id: string;
+        decision: string;
+        reason: string;
+      }>;
+      autoPassed: string[];
+    } = JSON.parse(
+      fs.readFileSync(
+        path.join(root, "examples", "ten-documents", "expected-output.json"),
+        "utf8"
+      )
+    );
+
+    assert.equal(input.verifiedBeforeHygiene, true);
+
+    const results = input.artifacts.map((artifact) =>
+      classify(artifact, examplePolicy)
+    );
+
+    const summary = {
+      artifactsReceived: results.length,
+      autoPassed: results.filter((result) => result.decision === "auto_pass").length,
+      surfaced: results.filter((result) => result.decision === "surface").length,
+      requireApproval: results.filter(
+        (result) => result.decision === "require_approval"
+      ).length,
+      escalated: results.filter((result) => result.decision === "escalate").length,
+    };
+
+    assert.deepEqual(summary, expected.summary);
+
+    const humanReviewSet = results
+      .filter((result) => result.decision !== "auto_pass")
+      .map(({ id, decision, reason }) => ({ id, decision, reason }));
+
+    assert.deepEqual(humanReviewSet, expected.humanReviewSet);
+
+    const autoPassed = results
+      .filter((result) => result.decision === "auto_pass")
+      .map((result) => result.id);
+
+    assert.deepEqual(autoPassed, expected.autoPassed);
   }
 );
