@@ -10,12 +10,12 @@
     {
       "id": "client-09",
       "decision": "require_approval",
-      "reason": "A new response-time commitment changes the commercial obligation."
+      "reason": "Policy requires explicit human authority for this change type."
     },
     {
       "id": "client-10",
       "decision": "surface",
-      "reason": "The tone materially diverges from the approved client style."
+      "reason": "The change is material enough to deserve human attention."
     }
   ],
   "autoPassed": [
