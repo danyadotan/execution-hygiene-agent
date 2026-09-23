@@ -38,6 +38,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
     "demo": "tsx src/index.ts",
     "test": "tsx --test tests/hygiene.test.ts",
     "check": "npm run build && npm run demo && npm test"
